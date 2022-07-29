@@ -1,11 +1,7 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace HttpPatch;
 
-[SuppressMessage("", "CA1034", Justification = "Nicer to group the 2 serializers together")]
 internal static class OptionallyPatchedJsonSerializer
 {
-    [SuppressMessage("", "CA1812", Justification = "Used in attributes")]
     internal class NewtonsoftJsonConverter : Newtonsoft.Json.JsonConverter<IOptionallyPatched>
     {
         public override void WriteJson(Newtonsoft.Json.JsonWriter writer, IOptionallyPatched? value, Newtonsoft.Json.JsonSerializer serializer)
@@ -20,7 +16,7 @@ internal static class OptionallyPatchedJsonSerializer
             }
         }
 
-        public override IOptionallyPatched? ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, IOptionallyPatched? existingValue, bool hasExistingValue, Newtonsoft.Json.JsonSerializer serializer)
+        public override IOptionallyPatched ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, IOptionallyPatched? existingValue, bool hasExistingValue, Newtonsoft.Json.JsonSerializer serializer)
         {
             var underlyingType = objectType.GetGenericArguments().Single();
 
@@ -33,9 +29,8 @@ internal static class OptionallyPatchedJsonSerializer
             return (IOptionallyPatched)Activator.CreateInstance(objectType, true, deserializedItem)!;
         }
     }
-
-    [SuppressMessage("", "CA1812", Justification = "Used in attributes")]
-    internal class SystemTextJson<T> : System.Text.Json.Serialization.JsonConverter<OptionallyPatched<T>>
+    
+    private class SystemTextJson<T> : System.Text.Json.Serialization.JsonConverter<OptionallyPatched<T>>
     {
         public override void Write(System.Text.Json.Utf8JsonWriter writer, OptionallyPatched<T> value, System.Text.Json.JsonSerializerOptions options)
             => throw new NotImplementedException();
@@ -48,14 +43,13 @@ internal static class OptionallyPatchedJsonSerializer
             return (OptionallyPatched<T>)optionallyPatchedWrapper!;
         }
     }
-
-    [SuppressMessage("", "CA1812", Justification = "Used in attributes")]
+    
     internal class SystemTextJsonFactory : System.Text.Json.Serialization.JsonConverterFactory
     {
         public override bool CanConvert(Type typeToConvert)
             => typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(OptionallyPatched<>);
 
-        public override System.Text.Json.Serialization.JsonConverter? CreateConverter(Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
+        public override System.Text.Json.Serialization.JsonConverter CreateConverter(Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
         {
             var underlyingType = typeToConvert.GetGenericArguments().Single();
             var genericType = typeof(SystemTextJson<>).MakeGenericType(underlyingType);

@@ -4,7 +4,10 @@ internal static class HttpClientExtensions
 {
     public static Task<HttpResponseMessage> PatchAsJsonAsync<T>(this HttpClient client, string requestUri, T body)
     {
-        if (client == null) { throw new ArgumentNullException(nameof(client)); }
+        if (client == null)
+        {
+            throw new ArgumentNullException(nameof(client));
+        }
 
         var httpRequestMessage = new HttpRequestMessage
         {
