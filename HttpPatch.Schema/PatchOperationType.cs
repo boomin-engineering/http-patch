@@ -1,8 +1,7 @@
-namespace HttpPatch.Schema
+namespace HttpPatch.Schema;
+
+public enum PatchOperationType
 {
-    public enum PatchOperationType
-    {
-        Remove,
-        Replace
-    }
+    Remove,
+    Replace
 }

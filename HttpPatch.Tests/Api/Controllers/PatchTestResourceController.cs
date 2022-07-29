@@ -29,7 +29,7 @@ public class PatchTestResourceController : ControllerBase
 
         if (request.Count.IsIncludedInPatch)
         {
-            testResource = testResource with { Count = request.Count.Value! };
+            testResource = testResource with { Count = request.Count.Value };
         }
         
         if (request.Address.IsIncludedInPatch)
@@ -39,7 +39,7 @@ public class PatchTestResourceController : ControllerBase
         
         if (request.State.IsIncludedInPatch)
         {
-            testResource = testResource with { State = request.State.Value! };
+            testResource = testResource with { State = request.State.Value };
         }
         
         if (request.People.IsIncludedInPatch)
